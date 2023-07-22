@@ -1,34 +1,34 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from fastapi.responses import ORJSONResponse
 import uvicorn
 
-from api.v1 import menus, submenus, dishes
+from api import router as api_router
 from core.config import Config
 
 config = Config()
+ROUTERS = (api_router,)
 
 
-app = FastAPI(
-    title=config.app_name,
-    docs_url="/api/openapi",
-    openapi_url="/api/openapi.json",
-    default_response_class=ORJSONResponse,
-)
+def prepare_app(routers: tuple[APIRouter]):
+    app = FastAPI(
+        title=config.app_name,
+        docs_url="/api/openapi",
+        openapi_url="/api/openapi.json",
+        default_response_class=ORJSONResponse,
+    )
+    for router in routers:
+        app.include_router(router)
+
+    return app
+
+
+app = prepare_app(ROUTERS)
 
 
 @app.on_event('startup')
 async def startup():
     pass
 
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-
-# app.include_router(menus.router, prefix="/api/v1/menus", tags=["menus"])
-# app.include_router(submenus.router, prefix="/api/v1/submenus", tags=["submenus"])
-# app.include_router(dishes.router, prefix="/api/v1/dishes", tags=["dishes"])
 
 if __name__ == "__main__":
     uvicorn.run(
