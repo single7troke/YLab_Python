@@ -9,7 +9,7 @@ git clone https://github.com/single7troke/YLab_Python.git
 ```shell
 cd YLab_Python
 ```
-3. Создаем .env файл
+3. Создаем .env файл(create .env).
 ```shell
 echo "POSTGRES_USER=user
 POSTGRES_PASSWORD=1234
