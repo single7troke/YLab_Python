@@ -7,7 +7,7 @@ run:
 	docker-compose -f config/dev/docker-compose.yml up -d
 
 stop:
-	docker-compose -f config/dev/docker-compose.yml --remove-orphans
+	docker-compose -f config/dev/docker-compose.yml down -v --remove-orphans
 
 build:
 	docker image rm dev-web-app
