@@ -3,3 +3,6 @@ orjson==3.9.2
 pydantic==2.0.3
 pydantic-settings==2.0.2
 uvicorn==0.23.1
+SQLAlchemy==2.0.19
+asyncpg==0.28.0
+alembic==1.11.1
