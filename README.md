@@ -9,11 +9,17 @@ git clone https://github.com/single7troke/YLab_Python.git
 ```shell
 cd YLab_Python
 ```
-2. Применяем миграцию(run migration).
+3. Создаем .env файл
 ```shell
-make alembic_migrate
+echo "POSTGRES_USER=user
+POSTGRES_PASSWORD=1234
+POSTGRES_DB=menu_db" > config/dev/.env
 ```
-2. Запускаем сервис(run service).
+4. Запускаем сервис(run service).
 ```shell
 make run
+```
+5. Применяем миграцию(run migration).
+```shell
+make alembic_migrate
 ```
