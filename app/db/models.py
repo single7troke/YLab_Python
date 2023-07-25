@@ -49,6 +49,6 @@ class SubMenu(Base, BaseMixin):
 class Dish(Base, BaseMixin):
     __tablename__ = "dish"
 
-    price: Mapped[decimal.Decimal] = mapped_column(DECIMAL(precision=2))
+    price: Mapped[decimal.Decimal] = mapped_column(DECIMAL(precision=6, scale=2))
     submenu_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("submenu.id", ondelete="CASCADE"), nullable=False)
     submenu: Mapped["SubMenu"] = relationship(back_populates="dishes")
