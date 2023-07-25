@@ -14,9 +14,13 @@ class BaseOrJSONModel(BaseModel):
         json_dumps = orjson_dumps
 
 
-class Test(BaseModel):
+class CreateMenu(BaseModel):
     title: str
     description: str
+
+
+class CreateDish(CreateMenu):
+    price: str
 
 
 class Base(BaseOrJSONModel):
