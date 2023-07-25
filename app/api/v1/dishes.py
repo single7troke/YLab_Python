@@ -20,7 +20,7 @@ async def get_all_dishes(menu_id: UUID,
     return [Dish(id=str(row.id),
                  title=row.title,
                  description=row.description,
-                 price=row.price) for row in rows]
+                 price=str(row.price)) for row in rows]
 
 
 @router.get("/{dish_id}")
@@ -34,7 +34,7 @@ async def get_single_dish(menu_id: UUID,
         return Dish(id=str(row.id),
                     title=row.title,
                     description=row.description,
-                    price=row.price)
+                    price=str(row.price))
     raise HTTPException(status_code=404,
                         detail="dish not found")
 
@@ -49,7 +49,7 @@ async def create_dish(menu_id: UUID,
     return Dish(id=str(row.id),
                 title=row.title,
                 description=row.description,
-                price=row.price)
+                price=str(row.price))
 
 
 @router.patch("/{dish_id}", response_model=Dish)
@@ -63,7 +63,7 @@ async def update_dish(menu_id: UUID,
     return Dish(id=str(row.id),
                 title=row.title,
                 description=row.description,
-                price=row.price)
+                price=str(row.price))
 
 
 @router.delete("/{dish_id}")
