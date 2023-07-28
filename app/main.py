@@ -37,3 +37,10 @@ if __name__ == "__main__":
         port=8000,
         reload=True
     )
+
+# TODO:
+#  print(*(i.name for i in Menu().__table__.c))
+#  dro, Decimal
+#  x = schemas.Menu(**{i: row.__getattribute__(i) for i in schemas.Menu.model_fields})
+#  Отдельная схема в БД
+#  group by, count
