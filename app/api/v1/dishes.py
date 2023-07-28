@@ -4,7 +4,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from schemas.schemas import Dish, CreateDish
-from db import models
 from db.pg_db import PostgresDB, get_session
 from db import models
 
@@ -16,7 +15,7 @@ async def get_all_dishes(menu_id: UUID,
                          submenu_id: UUID,
                          session: AsyncSession = Depends(get_session)):
     db = PostgresDB(session)
-    rows = await db.get_all(model=models.Dish)
+    rows = await db.get_all(model=models.Dish, _id=submenu_id)
     return [Dish(id=str(row.id),
                  title=row.title,
                  description=row.description,

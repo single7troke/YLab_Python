@@ -39,7 +39,13 @@ class PostgresDB(AbstractDB):
         data = await self.session.execute(select(model).where(model.id == _id))
         return data.scalar()
 
-    async def get_all(self, model):
+    async def get_all(self, model, **kwargs):
+        if model == SubMenu:
+            data = await self.session.execute(select(model).where(model.menu_id == kwargs["_id"]))
+            return data.scalars().all()
+        elif model == Dish:
+            data = await self.session.execute(select(model).where(model.submenu_id == kwargs["_id"]))
+            return data.scalars().all()
         data = await self.session.execute(select(model))
         return data.scalars().all()
 
