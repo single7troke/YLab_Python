@@ -12,10 +12,14 @@ services:
       - "8000:8000"
     networks:
       - ylab_web
-    command: python3 main.py
+#    command: python3 main.py
+    entrypoint: sh -c "alembic upgrade head && python3 main.py"
+    depends_on:
+      db:
+        condition: service_healthy
 
   db:
-    image: postgres:13
+    image: postgres:15.1-alpine
     env_file:
       - .env
     ports:
@@ -24,6 +28,12 @@ services:
       - ylab_web
     volumes:
       - menu-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 80s
 
 volumes:
   menu-db:
