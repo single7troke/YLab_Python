@@ -1,5 +1,4 @@
 # YLab_Python
-
 ## Запуск
 1. Копируем репозиторий(copy repo).
 ```shell
@@ -19,7 +18,11 @@ POSTGRES_DB=menu_db" > config/dev/.env
 ```shell
 make run
 ```
-5. Применяем миграцию(run migration).
+5. Запускаем тесты(run tests).
 ```shell
-make alembic_migrate
+make make test_run
+```
+6. Останавливаем сервисы, удаляем контейнеры и вольюмы(Stop services, delete containers and volumes)
+```shell
+make stop
 ```
