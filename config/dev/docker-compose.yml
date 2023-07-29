@@ -47,7 +47,7 @@ services:
       - .env
     networks:
       - ylab_web
-    entrypoint: sh -c "pytest -rsa"
+    entrypoint: sh -c "pytest -v"
 
 volumes:
   menu-db:
