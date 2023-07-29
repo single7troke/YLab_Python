@@ -20,7 +20,7 @@ make run
 ```
 5. Запускаем тесты(run tests).
 ```shell
-make make test_run
+make test_run
 ```
 6. Останавливаем сервисы, удаляем контейнеры и вольюмы(Stop services, delete containers and volumes)
 ```shell
