@@ -14,7 +14,7 @@ router = APIRouter(prefix="/menus/{menu_id}/submenus", tags=["submenu"])
 async def get_all_submenu(menu_id: UUID,
                           session: AsyncSession = Depends(get_session)):
     db = PostgresDB(session)
-    rows = await db.get_all(models.SubMenu)
+    rows = await db.get_all(models.SubMenu, _id=menu_id)
     return [schemas.SubMenu(id=str(i.id),
                             title=i.title,
                             description=i.description,

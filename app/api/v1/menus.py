@@ -2,7 +2,7 @@ from typing import List
 from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import APIRouter, Depends, HTTPException, requests
+from fastapi import APIRouter, Depends, HTTPException
 
 from schemas import schemas
 from db import models
@@ -10,14 +10,6 @@ from db import models
 from db.pg_db import get_session, PostgresDB
 
 router = APIRouter(prefix="/menus", tags=["menu"])
-
-test_menu = {
-    "id": "a2eb416c-2245-4526-bb4b-6343d5c5016a",
-    "title": "My menu 1",
-    "description": "My menu description 1",
-    "submenus_count": 0,
-    "dishes_count": 0
-}
 
 
 @router.get("", response_model=List[schemas.Menu])
@@ -44,7 +36,7 @@ async def get_single_menu(menu_id: UUID,
                             submenus_count=row.submenu_counter,
                             dishes_count=row.dish_counter)
     raise HTTPException(status_code=404,
-                         detail="menu not found")
+                        detail="menu not found")
 
 
 @router.post("", response_model=schemas.Menu, status_code=201)
