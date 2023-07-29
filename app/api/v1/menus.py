@@ -1,9 +1,8 @@
 from typing import List
 from uuid import UUID
 
-from sqlalchemy import select, func, column
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import APIRouter, Depends, HTTPException, requests
+from fastapi import APIRouter, Depends, HTTPException
 
 from schemas import schemas
 from db import models
@@ -11,37 +10,6 @@ from db import models
 from db.pg_db import get_session, PostgresDB
 
 router = APIRouter(prefix="/menus", tags=["menu"])
-
-test_menu = {
-    "id": "a2eb416c-2245-4526-bb4b-6343d5c5016a",
-    "title": "My menu 1",
-    "description": "My menu description 1",
-    "submenus_count": 0,
-    "dishes_count": 0
-}
-
-
-@router.get("test/{test_id}")   # todo это тестовая ручка для сложного ORM запроса(не работает при пустом подменю)
-async def test(test_id, session: AsyncSession = Depends(get_session)):
-    db = PostgresDB(session)
-    rows = await session.execute(
-        select(column("menu_id"), func.sum(column("count")), func.count(column("sub_id"))).select_from(
-            select(
-            models.SubMenu.title,
-                models.SubMenu.menu_id, models.SubMenu.id.label("sub_id"), func.count(models.Dish.submenu_id).label("count")).
-                outerjoin(models.SubMenu).
-                outerjoin(models.Menu).
-                where(models.Menu.id == test_id).
-                # filter(models.Menu.id == test_id).
-            group_by(models.SubMenu.id)).group_by("menu_id")
-    )
-
-    res = []
-    for row in rows.all():
-        print(row, "======")
-        res.append(row)
-    print(res)
-    return {"1": str(res)}
 
 
 @router.get("", response_model=List[schemas.Menu])
