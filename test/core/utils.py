@@ -1,5 +1,8 @@
 import aiohttp
 import json
+
+import pytest
+
 from core.config import Config
 from core.models import Response
 
@@ -14,6 +17,7 @@ def check_header(headers):
     return headers["Content-Type"] == "application/json"
 
 
+@pytest.mark.asyncio
 async def get_request(url, menu_id="", submenu_id="", dish_id="") -> Response:
     url = construct_url(url, menu_id=menu_id, submenu_id=submenu_id, dish_id=dish_id)
     async with aiohttp.ClientSession() as session:
@@ -22,6 +26,7 @@ async def get_request(url, menu_id="", submenu_id="", dish_id="") -> Response:
             return Response(data=data, status_code=resp.status, headers=resp.headers)
 
 
+@pytest.mark.asyncio
 async def post_request(url, data, menu_id="", submenu_id="", dish_id="") -> Response:
     url = construct_url(url, menu_id=menu_id, submenu_id=submenu_id, dish_id=dish_id)
     async with aiohttp.ClientSession() as session:
@@ -32,6 +37,7 @@ async def post_request(url, data, menu_id="", submenu_id="", dish_id="") -> Resp
             return Response(data=data, status_code=resp.status, headers=resp.headers)
 
 
+@pytest.mark.asyncio
 async def update_request(url, data, menu_id="", submenu_id="", dish_id="") -> Response:
     url = construct_url(url=url, menu_id=menu_id, submenu_id=submenu_id, dish_id=dish_id)
     async with aiohttp.ClientSession() as session:
@@ -42,6 +48,7 @@ async def update_request(url, data, menu_id="", submenu_id="", dish_id="") -> Re
             return Response(data=data, status_code=resp.status, headers=resp.headers)
 
 
+@pytest.mark.asyncio
 async def delete_request(url, menu_id="", submenu_id="", dish_id="") -> Response:
     url = construct_url(url=url, menu_id=menu_id, submenu_id=submenu_id, dish_id=dish_id)
     async with aiohttp.ClientSession() as session:
