@@ -24,8 +24,8 @@ class BaseMixin:
 class Menu(Base, BaseMixin):
     __tablename__ = "menu"
 
-    submenu_counter: Mapped[int] = mapped_column(SmallInteger, nullable=False, insert_default=0)
-    dish_counter: Mapped[int] = mapped_column(SmallInteger, nullable=False, insert_default=0)
+    # submenu_counter: Mapped[int] = mapped_column(SmallInteger, nullable=False, insert_default=0)
+    # dish_counter: Mapped[int] = mapped_column(SmallInteger, nullable=False, insert_default=0)
     submenus: Mapped[list["SubMenu"]] = relationship(
         back_populates="menu",
         cascade="all, delete",
@@ -36,7 +36,7 @@ class Menu(Base, BaseMixin):
 class SubMenu(Base, BaseMixin):
     __tablename__ = "submenu"
 
-    dish_counter: Mapped[int] = mapped_column(SmallInteger, nullable=False, insert_default=0)
+    # dish_counter: Mapped[int] = mapped_column(SmallInteger, nullable=False, insert_default=0)
     menu_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("menu.id", ondelete="CASCADE"), nullable=False)
     menu: Mapped["Menu"] = relationship(back_populates="submenus")
     dishes: Mapped[list["Dish"]] = relationship(
