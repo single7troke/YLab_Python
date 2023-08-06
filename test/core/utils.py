@@ -1,24 +1,23 @@
-import aiohttp
 import json
 
+import aiohttp
 import pytest
-
 from core.config import Config
 from core.models import Response
 
 config = Config()
 
 
-def construct_url(url: str, menu_id="", submenu_id="", dish_id=""):
+def construct_url(url: str, menu_id='', submenu_id='', dish_id=''):
     return url.format(menu_id=menu_id, submenu_id=submenu_id, dish_id=dish_id)
 
 
 def check_header(headers):
-    return headers["Content-Type"] == "application/json"
+    return headers['Content-Type'] == 'application/json'
 
 
 @pytest.mark.asyncio
-async def get_request(url, menu_id="", submenu_id="", dish_id="") -> Response:
+async def get_request(url, menu_id='', submenu_id='', dish_id='') -> Response:
     url = construct_url(url, menu_id=menu_id, submenu_id=submenu_id, dish_id=dish_id)
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as resp:
@@ -27,7 +26,7 @@ async def get_request(url, menu_id="", submenu_id="", dish_id="") -> Response:
 
 
 @pytest.mark.asyncio
-async def post_request(url, data, menu_id="", submenu_id="", dish_id="") -> Response:
+async def post_request(url, data, menu_id='', submenu_id='', dish_id='') -> Response:
     url = construct_url(url, menu_id=menu_id, submenu_id=submenu_id, dish_id=dish_id)
     async with aiohttp.ClientSession() as session:
         async with session.post(url=url,
@@ -38,7 +37,7 @@ async def post_request(url, data, menu_id="", submenu_id="", dish_id="") -> Resp
 
 
 @pytest.mark.asyncio
-async def update_request(url, data, menu_id="", submenu_id="", dish_id="") -> Response:
+async def update_request(url, data, menu_id='', submenu_id='', dish_id='') -> Response:
     url = construct_url(url=url, menu_id=menu_id, submenu_id=submenu_id, dish_id=dish_id)
     async with aiohttp.ClientSession() as session:
         async with session.patch(url=url,
@@ -49,7 +48,7 @@ async def update_request(url, data, menu_id="", submenu_id="", dish_id="") -> Re
 
 
 @pytest.mark.asyncio
-async def delete_request(url, menu_id="", submenu_id="", dish_id="") -> Response:
+async def delete_request(url, menu_id='', submenu_id='', dish_id='') -> Response:
     url = construct_url(url=url, menu_id=menu_id, submenu_id=submenu_id, dish_id=dish_id)
     async with aiohttp.ClientSession() as session:
         async with session.delete(url=url) as resp:

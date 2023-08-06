@@ -1,9 +1,14 @@
 import pytest
-
 from core.config import Config
-from core.models import Menu, SubMenu, Dish
-from core.utils import get_request, post_request, update_request, delete_request, check_header
-from data.data import dish_create, dish_update, dish_delete
+from core.models import Dish, Menu, SubMenu
+from core.utils import (
+    check_header,
+    delete_request,
+    get_request,
+    post_request,
+    update_request,
+)
+from data.data import dish_create, dish_delete, dish_update
 
 config = Config()
 
@@ -33,9 +38,9 @@ class TestDish:
                                   data=dish_create)
         assert resp.status_code == 201
         assert check_header(resp.headers)
-        assert resp.data["title"] == dish_create["title"]
-        assert resp.data["description"] == dish_create["description"]
-        assert resp.data["price"] == dish_create["price"]
+        assert resp.data['title'] == dish_create['title']
+        assert resp.data['description'] == dish_create['description']
+        assert resp.data['price'] == dish_create['price']
         global DISH
         DISH = Dish(**resp.data)
 
@@ -65,10 +70,10 @@ class TestDish:
                                     data=dish_update)
         assert resp.status_code == 200
         assert check_header(resp.headers)
-        assert resp.data["id"] == DISH.id
-        assert resp.data["title"] == dish_update["title"]
-        assert resp.data["description"] == dish_update["description"]
-        assert resp.data["price"] == dish_update["price"]
+        assert resp.data['id'] == DISH.id
+        assert resp.data['title'] == dish_update['title']
+        assert resp.data['description'] == dish_update['description']
+        assert resp.data['price'] == dish_update['price']
         DISH = Dish(**resp.data)
 
     async def test_delete_dish(self):
@@ -87,4 +92,4 @@ class TestDish:
                                  dish_id=DISH.id)
         assert resp.status_code == 404
         assert check_header(resp.headers)
-        assert resp.data == {"detail": "dish not found"}
+        assert resp.data == {'detail': 'dish not found'}

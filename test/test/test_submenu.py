@@ -1,9 +1,14 @@
 import pytest
-
 from core.config import Config
 from core.models import Menu, SubMenu
-from core.utils import get_request, post_request, update_request, delete_request, check_header
-from data.data import submenu_create, submenu_update, submenu_delete
+from core.utils import (
+    check_header,
+    delete_request,
+    get_request,
+    post_request,
+    update_request,
+)
+from data.data import submenu_create, submenu_delete, submenu_update
 
 config = Config()
 
@@ -18,7 +23,7 @@ class TestSubmenu:
         await clear_db
         global MENU
         MENU = await create_menu
-        resp = await get_request(url=config.sub_menu_url, menu_id=MENU.id, submenu_id="")
+        resp = await get_request(url=config.sub_menu_url, menu_id=MENU.id, submenu_id='')
         assert resp.status_code == 200
         assert resp.data == []
 
@@ -26,8 +31,8 @@ class TestSubmenu:
         resp = await post_request(url=config.sub_menu_url, menu_id=MENU.id, data=submenu_create)
         assert resp.status_code == 201
         assert check_header(resp.headers)
-        assert resp.data["title"] == submenu_create["title"]
-        assert resp.data["description"] == submenu_create["description"]
+        assert resp.data['title'] == submenu_create['title']
+        assert resp.data['description'] == submenu_create['description']
         global SUBMENU
         SUBMENU = SubMenu(**resp.data)
 
@@ -49,10 +54,10 @@ class TestSubmenu:
                                     data=submenu_update)
         assert resp.status_code == 200
         assert check_header(resp.headers)
-        assert resp.data["id"] == SUBMENU.id
-        assert resp.data["title"] == submenu_update["title"]
-        assert resp.data["description"] == submenu_update["description"]
-        assert resp.data["dishes_count"] == SUBMENU.dishes_count
+        assert resp.data['id'] == SUBMENU.id
+        assert resp.data['title'] == submenu_update['title']
+        assert resp.data['description'] == submenu_update['description']
+        assert resp.data['dishes_count'] == SUBMENU.dishes_count
         SUBMENU = SubMenu(**resp.data)
 
     async def test_delete_submenu(self):
@@ -65,5 +70,5 @@ class TestSubmenu:
         resp = await get_request(url=config.sub_menu_url, menu_id=MENU.id, submenu_id=SUBMENU.id)
         assert resp.status_code == 404
         assert check_header(resp.headers)
-        assert resp.data == {"detail": "submenu not found"}
+        assert resp.data == {'detail': 'submenu not found'}
         await clear_db

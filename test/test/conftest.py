@@ -1,10 +1,8 @@
 import pytest
-
 from core.config import Config
 from core.models import Menu, SubMenu
+from core.utils import delete_request, get_request, post_request
 from data.data import menu_create, submenu_create
-from core.utils import get_request, post_request, delete_request
-
 
 config = Config()
 
@@ -12,7 +10,7 @@ config = Config()
 @pytest.fixture()
 @pytest.mark.asyncio
 async def create_menu():
-    resp = await post_request(url=config.menu_url, menu_id="", data=menu_create)
+    resp = await post_request(url=config.menu_url, menu_id='', data=menu_create)
     return Menu(**resp.data)
 
 
@@ -27,6 +25,6 @@ async def create_menu_and_submenu(create_menu):
 @pytest.fixture()
 @pytest.mark.asyncio
 async def clear_db():
-    resp = await get_request(url=config.menu_url, menu_id="")
+    resp = await get_request(url=config.menu_url, menu_id='')
     for menu in resp.data:
-        await delete_request(url=config.menu_url, menu_id=menu["id"])
+        await delete_request(url=config.menu_url, menu_id=menu['id'])
