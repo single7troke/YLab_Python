@@ -7,7 +7,7 @@ from services.submenu_service import SubmenuService
 router = APIRouter(prefix='/menus/{menu_id}/submenus', tags=['submenu'])
 
 
-@router.get('', response_model=SubMenu, status_code=200)
+@router.get('', response_model=list[SubMenu], status_code=200)
 async def get_all_submenu(menu_id: UUID,
                           submenu: SubmenuService = Depends(SubmenuService)):
     submenus = await submenu.list(menu_id=menu_id)

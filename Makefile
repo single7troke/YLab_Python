@@ -44,4 +44,6 @@ alembic_migrate:
 	docker exec -ti dev-web-app-1 alembic upgrade head
 
 test_run:
-	docker-compose -f config/dev/docker-compose.yml up test
+	docker-compose -f config/test/docker-compose.yml up -d web-app db redis
+	docker-compose -f config/test/docker-compose.yml up tests
+	docker-compose -f config/test/docker-compose.yml down -v --remove-orphans
