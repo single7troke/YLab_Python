@@ -1,14 +1,13 @@
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
-
-from schemas.schemas import Dish, CreateDish
+from schemas.schemas import CreateDish, Dish
 from services import DishService
 
-router = APIRouter(prefix="/menus/{menu_id}/submenus/{submenu_id}/dishes", tags=["dish"])
+router = APIRouter(prefix='/menus/{menu_id}/submenus/{submenu_id}/dishes', tags=['dish'])
 
 
-@router.get("", response_model=list[Dish])
+@router.get('', response_model=list[Dish])
 async def get_all_dishes(menu_id: UUID,
                          submenu_id: UUID,
                          dish: DishService = Depends(DishService)):
@@ -16,40 +15,38 @@ async def get_all_dishes(menu_id: UUID,
     return dishes
 
 
-@router.get("/{dish_id}")
+@router.get('/{dish_id}')
 async def get_single_dish(menu_id: UUID,
                           submenu_id: UUID,
                           dish_id: UUID,
                           dish: DishService = Depends(DishService)):
     dish = await dish.get(dish_id=dish_id)
     return dish
-    # raise HTTPException(status_code=404,
-    #                     detail="dish not found")
 
 
-@router.post("", response_model=Dish, status_code=201)
+@router.post('', response_model=Dish, status_code=201)
 async def create_dish(menu_id: UUID,
                       submenu_id: UUID,
                       body: CreateDish,
                       dish: DishService = Depends(DishService)):
-    new_dish = await dish.create(submenu_id=submenu_id, data=body)
+    new_dish = await dish.create(menu_id=menu_id, submenu_id=submenu_id, data=body)
     return new_dish
 
 
-@router.patch("/{dish_id}", response_model=Dish)
+@router.patch('/{dish_id}', response_model=Dish)
 async def update_dish(menu_id: UUID,
                       submenu_id: UUID,
                       dish_id: UUID,
                       body: CreateDish,
                       dish: DishService = Depends(DishService)):
-    updated_menu = await dish.update(dish_id=dish_id, data=body)
+    updated_menu = await dish.update(menu_id=menu_id, submenu_id=submenu_id, dish_id=dish_id, data=body)
     return updated_menu
 
 
-@router.delete("/{dish_id}")
+@router.delete('/{dish_id}')
 async def delete_dish(menu_id: UUID,
                       submenu_id: UUID,
                       dish_id: UUID,
                       dish: DishService = Depends(DishService)):
-    data = await dish.delete(dish_id=dish_id)
+    data = await dish.delete(menu_id=menu_id, submenu_id=submenu_id, dish_id=dish_id)
     return data

@@ -1,36 +1,34 @@
-from typing import List
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
-
 from schemas import schemas
 from services import MenuService
 
-router = APIRouter(prefix="/menus", tags=["menu"])
+router = APIRouter(prefix='/menus', tags=['menu'])
 
 
-@router.get("", response_model=List[schemas.Menu])
+@router.get('', response_model=list[schemas.Menu])
 async def get_all_menu(menu: MenuService = Depends(MenuService)):
 
     rows = await menu.list()
     return rows
 
 
-@router.get("/{menu_id}", response_model=schemas.Menu)
+@router.get('/{menu_id}', response_model=schemas.Menu)
 async def get_single_menu(menu_id: UUID,
                           menu: MenuService = Depends(MenuService)):
     data = await menu.get(menu_id=menu_id)
     return data
 
 
-@router.post("", response_model=schemas.Menu, status_code=201)
+@router.post('', response_model=schemas.Menu, status_code=201)
 async def create_menu(body: schemas.CreateMenu,
                       menu: MenuService = Depends(MenuService)):
     new_menu = await menu.create(data=body)
     return new_menu
 
 
-@router.patch("/{menu_id}", response_model=schemas.Menu, status_code=200)
+@router.patch('/{menu_id}', response_model=schemas.Menu, status_code=200)
 async def update_menu(menu_id: UUID,
                       data: schemas.CreateMenu,
                       menu: MenuService = Depends(MenuService)):
@@ -38,9 +36,8 @@ async def update_menu(menu_id: UUID,
     return updated_menu
 
 
-@router.delete("/{menu_id}")
+@router.delete('/{menu_id}')
 async def delete_menu(menu_id: UUID,
                       menu: MenuService = Depends(MenuService)):
     data = await menu.delete(menu_id=menu_id)
     return data
-
