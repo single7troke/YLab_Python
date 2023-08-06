@@ -17,7 +17,7 @@ class GetSingleMenuFilter(BaseFilter):
         self.id = _id
 
     def is_satisfied(self):
-        return {"id": self.id}
+        return {'id': self.id}
 
 
 class GetSingleSubmenuFilter(BaseFilter):
@@ -26,7 +26,7 @@ class GetSingleSubmenuFilter(BaseFilter):
         self.id = _id
 
     def is_satisfied(self):
-        return {"id": self.id}
+        return {'id': self.id}
 
 
 class GetSingleDishFilter(BaseFilter):
@@ -35,7 +35,7 @@ class GetSingleDishFilter(BaseFilter):
         self.id = _id
 
     def is_satisfied(self):
-        return {"id": self.id}
+        return {'id': self.id}
 
 
 class GetAllMenusFilter(Specification):
@@ -49,7 +49,7 @@ class GetAllSubmenusFilter(BaseFilter):
         self.id = _id
 
     def is_satisfied(self):
-        return {"menu_id": str(self.id)}
+        return {'menu_id': str(self.id)}
 
 
 class GetAllDishesFilter(BaseFilter):
@@ -58,4 +58,4 @@ class GetAllDishesFilter(BaseFilter):
         self.submenu_id = _id
 
     def is_satisfied(self):
-        return {"submenu_id": self.submenu_id}
+        return {'submenu_id': self.submenu_id}

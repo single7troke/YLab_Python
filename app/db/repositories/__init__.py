@@ -1,3 +1,0 @@
-from db.repositories.menu_repository import MenuRepository
-from db.repositories.submenu_repository import SubmenuRepository
-from db.repositories.dish_repository import DishRepository
