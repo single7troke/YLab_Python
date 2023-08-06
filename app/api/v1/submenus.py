@@ -7,14 +7,22 @@ from services.submenu_service import SubmenuService
 router = APIRouter(prefix='/menus/{menu_id}/submenus', tags=['submenu'])
 
 
-@router.get('', response_model=list[SubMenu], status_code=200)
+@router.get('',
+            response_model=list[SubMenu],
+            status_code=200,
+            summary='Submenu list',
+            description='Returns submenu list with dish count')
 async def get_all_submenu(menu_id: UUID,
                           submenu: SubmenuService = Depends(SubmenuService)):
     submenus = await submenu.list(menu_id=menu_id)
     return submenus
 
 
-@router.get('/{submenu_id}')
+@router.get('/{submenu_id}',
+            status_code=200,
+            summary='Single submenu',
+            description='Returns submenu with dish count'
+            )
 async def get_single_submenu(menu_id: UUID,
                              submenu_id: UUID,
                              submenu: SubmenuService = Depends(SubmenuService)):
@@ -22,7 +30,11 @@ async def get_single_submenu(menu_id: UUID,
     return submenu
 
 
-@router.post('', response_model=SubMenu, status_code=201)
+@router.post('',
+             response_model=SubMenu,
+             status_code=201,
+             summary='New submenu',
+             description='Creates new submenu and returns it')
 async def create_submenu(body: CreateSubmenu,
                          menu_id: UUID,
                          submenu: SubmenuService = Depends(SubmenuService)):
@@ -30,7 +42,11 @@ async def create_submenu(body: CreateSubmenu,
     return new_submenu
 
 
-@router.patch('/{submenu_id}', response_model=SubMenu, status_code=200)
+@router.patch('/{submenu_id}',
+              response_model=SubMenu,
+              status_code=200,
+              summary='Update submenu',
+              description='Updates submenu and returns updated submenu')
 async def update_submenu(menu_id: UUID,
                          submenu_id: UUID,
                          body: CreateSubmenu,
@@ -39,7 +55,9 @@ async def update_submenu(menu_id: UUID,
     return updated_menu
 
 
-@router.delete('/{submenu_id}')
+@router.delete('/{submenu_id}',
+               summary='Delete submenu',
+               description='Deletes submenu and returns message that submenu have been deleted')
 async def delete_submenu(menu_id: UUID,
                          submenu_id: UUID,
                          submenu: SubmenuService = Depends(SubmenuService)):

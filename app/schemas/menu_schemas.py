@@ -1,10 +1,10 @@
-from pydantic import BaseModel
-from schemas.base_schema import Base
+from pydantic import Field
+from schemas.base_schema import Base, BaseOrJSONModel
 
 
-class CreateMenu(BaseModel):
-    title: str
-    description: str
+class CreateMenu(BaseOrJSONModel):
+    title: str = Field(examples=['My menu'])
+    description: str = Field(examples=['My menu description'])
 
 
 class Menu(Base):

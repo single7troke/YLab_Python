@@ -1,13 +1,15 @@
-from schemas.base_schema import Base
-from schemas.menu_schemas import CreateMenu
+from pydantic import Field
+from schemas.base_schema import Base, BaseOrJSONModel
 
 
-class CreateDish(CreateMenu):
-    price: str
+class CreateDish(BaseOrJSONModel):
+    title: str = Field(examples=['My dish'])
+    description: str = Field(examples=['My dish description'])
+    price: str = Field(examples=['12.50'])
 
 
 class Dish(Base):
-    price: str
+    price: str = Field(examples=['12.50'])
 
     @classmethod
     def fill(cls, data):

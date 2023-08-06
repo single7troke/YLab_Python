@@ -1,9 +1,10 @@
-from schemas.base_schema import Base
-from schemas.menu_schemas import CreateMenu
+from pydantic import Field
+from schemas.base_schema import Base, BaseOrJSONModel
 
 
-class CreateSubmenu(CreateMenu):
-    pass
+class CreateSubmenu(BaseOrJSONModel):
+    title: str = Field(examples=['My submenu'])
+    description: str = Field(examples=['My submenu description'])
 
 
 class SubMenu(Base):
