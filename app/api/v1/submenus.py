@@ -1,72 +1,65 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Depends
+from schemas import CreateSubmenu, SubMenu
+from services.submenu_service import SubmenuService
 
-from schemas import schemas
-from db import models
-from db.pg_db import get_session, PostgresDB
-
-router = APIRouter(prefix="/menus/{menu_id}/submenus", tags=["submenu"])
+router = APIRouter(prefix='/menus/{menu_id}/submenus', tags=['submenu'])
 
 
-@router.get("")
+@router.get('',
+            response_model=list[SubMenu],
+            status_code=200,
+            summary='Submenu list',
+            description='Returns submenu list with dish count')
 async def get_all_submenu(menu_id: UUID,
-                          session: AsyncSession = Depends(get_session)):
-    db = PostgresDB(session)
-    rows = await db.get_all(models.SubMenu, _id=menu_id)
-    return [schemas.SubMenu(id=str(i.id),
-                            title=i.title,
-                            description=i.description,
-                            dishes_count=i.dish_counter) for i in rows]
+                          submenu: SubmenuService = Depends(SubmenuService)):
+    submenus = await submenu.list(menu_id=menu_id)
+    return submenus
 
 
-@router.get("/{submenu_id}")
+@router.get('/{submenu_id}',
+            status_code=200,
+            summary='Single submenu',
+            description='Returns submenu with dish count'
+            )
 async def get_single_submenu(menu_id: UUID,
                              submenu_id: UUID,
-                             session: AsyncSession = Depends(get_session)):
-    db = PostgresDB(session)
-    row = await db.get_one(_id=str(submenu_id), model=models.SubMenu)
-    if row:
-        return schemas.SubMenu(id=str(row.id),
-                               title=row.title,
-                               description=row.description,
-                               dishes_count=row.dish_counter)
-    raise HTTPException(status_code=404,
-                        detail="submenu not found")
+                             submenu: SubmenuService = Depends(SubmenuService)):
+    submenu = await submenu.get(submenu_id=submenu_id)
+    return submenu
 
 
-@router.post("", status_code=201)
-async def create_submenu(body: schemas.CreateMenu,
+@router.post('',
+             response_model=SubMenu,
+             status_code=201,
+             summary='New submenu',
+             description='Creates new submenu and returns it')
+async def create_submenu(body: CreateSubmenu,
                          menu_id: UUID,
-                         session: AsyncSession = Depends(get_session)
-                         ):
-    db = PostgresDB(session)
-    row = await db.create(models.SubMenu, menu_id=menu_id, **dict(body))
-    return schemas.SubMenu(id=str(row.id),
-                           title=row.title,
-                           description=row.description,
-                           dishes_count=row.dish_counter)
+                         submenu: SubmenuService = Depends(SubmenuService)):
+    new_submenu = await submenu.create(menu_id=menu_id, data=body)
+    return new_submenu
 
 
-@router.patch("/{submenu_id}")
+@router.patch('/{submenu_id}',
+              response_model=SubMenu,
+              status_code=200,
+              summary='Update submenu',
+              description='Updates submenu and returns updated submenu')
 async def update_submenu(menu_id: UUID,
                          submenu_id: UUID,
-                         body: schemas.CreateMenu,
-                         session: AsyncSession = Depends(get_session)):
-    db = PostgresDB(session)
-    row = await db.update(_id=submenu_id, model=models.SubMenu, data=body)
-    return schemas.SubMenu(id=str(row.id),
-                           title=row.title,
-                           description=row.description,
-                           dishes_count=row.dish_counter)
+                         body: CreateSubmenu,
+                         submenu: SubmenuService = Depends(SubmenuService)):
+    updated_menu = await submenu.update(menu_id=menu_id, submenu_id=submenu_id, data=body)
+    return updated_menu
 
 
-@router.delete("/{submenu_id}")
+@router.delete('/{submenu_id}',
+               summary='Delete submenu',
+               description='Deletes submenu and returns message that submenu have been deleted')
 async def delete_submenu(menu_id: UUID,
                          submenu_id: UUID,
-                         session: AsyncSession = Depends(get_session)):
-    db = PostgresDB(session)
-    await db.delete(_id=submenu_id, model=models.SubMenu)
-    return {"status": True,
-            "message": "The submenu has been deleted"}
+                         submenu: SubmenuService = Depends(SubmenuService)):
+    data = await submenu.delete(menu_id=menu_id, submenu_id=submenu_id)
+    return data

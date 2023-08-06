@@ -1,9 +1,8 @@
-from fastapi import FastAPI, APIRouter
-from fastapi.responses import ORJSONResponse
 import uvicorn
-
 from api import router as api_router
 from core.config import Config
+from fastapi import APIRouter, FastAPI
+from fastapi.responses import ORJSONResponse
 
 config = Config()
 ROUTERS = (api_router,)
@@ -12,8 +11,8 @@ ROUTERS = (api_router,)
 def prepare_app(routers: tuple[APIRouter]):
     app = FastAPI(
         title=config.app_name,
-        docs_url="/api/openapi",
-        openapi_url="/api/openapi.json",
+        docs_url='/api/openapi',
+        openapi_url='/api/openapi.json',
         default_response_class=ORJSONResponse,
     )
     for router in routers:
@@ -30,17 +29,10 @@ async def startup():
     pass
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
+        'main:app',
+        host='0.0.0.0',
         port=8000,
         reload=True
     )
-
-# TODO:
-#  print(*(i.name for i in Menu().__table__.c))
-#  dro, Decimal
-#  x = schemas.Menu(**{i: row.__getattribute__(i) for i in schemas.Menu.model_fields})
-#  Отдельная схема в БД
-#  group by, count

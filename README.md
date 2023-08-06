@@ -1,9 +1,5 @@
 # YLab_Python
-комментарий для проверяющего.</br>
-Тесты я написал для ЭНДПОИНТОВ, как было сказано в названии ДЗ.</br>
-Просто дергаем ручки реквестом и смотрим что приходит в ответ.</br>
-В чате было мнение что нужно сделать именно unit тесты.</br>
-Если это так, то получается что задание я не выполнил.</br>
+
 
 ## Запуск
 1. Копируем репозиторий(copy repo).
@@ -18,17 +14,20 @@ cd YLab_Python
 ```shell
 echo "POSTGRES_USER=user
 POSTGRES_PASSWORD=1234
-POSTGRES_DB=menu_db" > config/dev/.env
+POSTGRES_DB=menu_db
+REDIS_HOST=redis
+REDIS_PORT=6379" > config/dev/.env &&
+cp config/dev/.env config/test
 ```
 4. Запускаем сервис(run service).
 ```shell
 make run
 ```
-5. Запускаем тесты(run tests).
-```shell
-make test_run
-```
-6. Останавливаем сервисы, удаляем контейнеры и вольюмы(Stop services, delete containers and volumes)
+5. Останавливаем сервисы, удаляем контейнеры и вольюмы(Stop services, delete containers and volumes)
 ```shell
 make stop
+```
+6. Запускаем тесты(run tests).
+```shell
+make test_run
 ```

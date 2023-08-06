@@ -4,7 +4,7 @@ help:
 	@awk 'BEGIN {FS = ":.*##"; printf "Usage: make \033[36m<target>\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 run:
-	docker-compose -f config/dev/docker-compose.yml up -d web-app db
+	docker-compose -f config/dev/docker-compose.yml up -d web-app db redis
 
 stop:
 	docker-compose -f config/dev/docker-compose.yml down -v --remove-orphans
@@ -24,6 +24,10 @@ restart_app:
 	docker stop dev-web-app-1
 	docker start dev-web-app-1
 
+restart_redis:
+	docker stop dev-redis-1
+	docker start dev-redis-1
+
 logs_app:
 	docker logs dev-web-app-1
 
@@ -40,4 +44,6 @@ alembic_migrate:
 	docker exec -ti dev-web-app-1 alembic upgrade head
 
 test_run:
-	docker-compose -f config/dev/docker-compose.yml up test
+	docker-compose -f config/test/docker-compose.yml up -d web-app db redis
+	docker-compose -f config/test/docker-compose.yml up tests
+	docker-compose -f config/test/docker-compose.yml down -v --remove-orphans

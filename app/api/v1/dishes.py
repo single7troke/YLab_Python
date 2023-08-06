@@ -1,76 +1,70 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Depends
+from schemas import CreateDish, Dish
+from services import DishService
 
-from schemas.schemas import Dish, CreateDish
-from db.pg_db import PostgresDB, get_session
-from db import models
-
-router = APIRouter(prefix="/menus/{menu_id}/submenus/{submenu_id}/dishes", tags=["dish"])
+router = APIRouter(prefix='/menus/{menu_id}/submenus/{submenu_id}/dishes', tags=['dish'])
 
 
-@router.get("", response_model=list[Dish])
+@router.get('',
+            response_model=list[Dish],
+            status_code=200,
+            summary='Dish list',
+            description='Returns dish list')
 async def get_all_dishes(menu_id: UUID,
                          submenu_id: UUID,
-                         session: AsyncSession = Depends(get_session)):
-    db = PostgresDB(session)
-    rows = await db.get_all(model=models.Dish, _id=submenu_id)
-    return [Dish(id=str(row.id),
-                 title=row.title,
-                 description=row.description,
-                 price=str(row.price)) for row in rows]
+                         dish: DishService = Depends(DishService)):
+    dishes = await dish.list(submenu_id=submenu_id)
+    return dishes
 
 
-@router.get("/{dish_id}")
+@router.get('/{dish_id}',
+            response_model=Dish,
+            status_code=200,
+            summary='Single dish',
+            description='Returns single dish')
 async def get_single_dish(menu_id: UUID,
                           submenu_id: UUID,
                           dish_id: UUID,
-                          session: AsyncSession = Depends(get_session)):
-    db = PostgresDB(session)
-    row = await db.get_one(_id=str(dish_id), model=models.Dish)
-    if row:
-        return Dish(id=str(row.id),
-                    title=row.title,
-                    description=row.description,
-                    price=str(row.price))
-    raise HTTPException(status_code=404,
-                        detail="dish not found")
+                          dish: DishService = Depends(DishService)):
+    dish = await dish.get(dish_id=dish_id)
+    return dish
 
 
-@router.post("", response_model=Dish, status_code=201)
+@router.post('',
+             response_model=Dish,
+             status_code=201,
+             summary='New dish',
+             description='Creates new dish and returns it')
 async def create_dish(menu_id: UUID,
                       submenu_id: UUID,
                       body: CreateDish,
-                      session: AsyncSession = Depends(get_session)):
-    db = PostgresDB(session)
-    row = await db.create(model=models.Dish, menu_id=menu_id, submenu_id=submenu_id, **dict(body))
-    return Dish(id=str(row.id),
-                title=row.title,
-                description=row.description,
-                price=str(row.price))
+                      dish: DishService = Depends(DishService)):
+    new_dish = await dish.create(menu_id=menu_id, submenu_id=submenu_id, data=body)
+    return new_dish
 
 
-@router.patch("/{dish_id}", response_model=Dish)
+@router.patch('/{dish_id}',
+              response_model=Dish,
+              status_code=200,
+              summary='Update menu',
+              description='Updates dish and returns updated dish')
 async def update_dish(menu_id: UUID,
                       submenu_id: UUID,
                       dish_id: UUID,
                       body: CreateDish,
-                      session: AsyncSession = Depends(get_session)):
-    db = PostgresDB(session)
-    row = await db.update(_id=dish_id, model=models.Dish, data=body)
-    return Dish(id=str(row.id),
-                title=row.title,
-                description=row.description,
-                price=str(row.price))
+                      dish: DishService = Depends(DishService)):
+    updated_menu = await dish.update(menu_id=menu_id, submenu_id=submenu_id, dish_id=dish_id, data=body)
+    return updated_menu
 
 
-@router.delete("/{dish_id}")
+@router.delete('/{dish_id}',
+               summary='Delete dish',
+               description='Deletes dish and returns message that dish have been deleted')
 async def delete_dish(menu_id: UUID,
                       submenu_id: UUID,
                       dish_id: UUID,
-                      session: AsyncSession = Depends(get_session)):
-    db = PostgresDB(session)
-    await db.delete(_id=str(dish_id), model=models.Dish)
-    return {"status": True,
-            "message": "The dish has been deleted"}
+                      dish: DishService = Depends(DishService)):
+    data = await dish.delete(menu_id=menu_id, submenu_id=submenu_id, dish_id=dish_id)
+    return data
