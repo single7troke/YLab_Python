@@ -18,7 +18,7 @@ cd YLab_Python
 ```shell
 echo "POSTGRES_USER=user
 POSTGRES_PASSWORD=1234
-POSTGRES_DB=menu_db" > conf/dev/.env
+POSTGRES_DB=menu_db" > config/dev/.env
 ```
 4. Запускаем сервис(run service).
 ```shell
