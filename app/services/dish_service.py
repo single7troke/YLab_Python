@@ -2,8 +2,8 @@ import pickle
 from uuid import UUID
 
 from db.filters import GetAllDishesFilter, GetSingleDishFilter
+from db.repositories import DishRepository
 from fastapi import Depends, HTTPException
-from repositories.dish_repository import DishRepository
 from schemas import CreateDish, Dish
 from services import CacheService
 

@@ -2,8 +2,8 @@ import pickle
 from uuid import UUID
 
 from db.filters import GetAllMenusFilter, GetSingleMenuFilter
+from db.repositories import MenuRepository
 from fastapi import Depends, HTTPException
-from repositories.menu_repository import MenuRepository
 from schemas import CreateMenu, Menu
 from services import CacheService
 

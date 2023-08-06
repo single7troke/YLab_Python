@@ -1,5 +1,5 @@
+from db.repositories import CacheRepository
 from fastapi import Depends
-from repositories.cache_repository import CacheRepository
 
 
 class CacheService:
