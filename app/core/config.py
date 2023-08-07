@@ -28,6 +28,6 @@ class RedisSettings(BaseSettings):
 
 
 class Config(BaseSettings):
-    app_name: str = 'Hello'
+    app_name: str = 'Menu Service'
     postgres: Postgres = Postgres()
     redis: RedisSettings = RedisSettings()
