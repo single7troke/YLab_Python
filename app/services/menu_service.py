@@ -4,7 +4,7 @@ from uuid import UUID
 from db.filters import GetAllMenusFilter, GetSingleMenuFilter
 from db.repositories import MenuRepository
 from fastapi import Depends, HTTPException
-from schemas import CreateMenu, Menu
+from schemas import CreateMenu, Everything, Menu
 from services import CacheService
 
 
@@ -61,3 +61,8 @@ class MenuService:
             return {'status': True,
                     'message': 'The menu has been deleted'}
         return None
+
+    async def get_all_data(self):
+        rows = await self.repository.get_everything()
+        data = [Everything.fill(row) for row in rows]
+        return data

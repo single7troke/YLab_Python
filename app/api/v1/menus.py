@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
-from schemas import CreateMenu, Menu
+from schemas import CreateMenu, Everything, Menu
 from services import MenuService
 
 router = APIRouter(prefix='/menus', tags=['menu'])
@@ -14,6 +14,15 @@ router = APIRouter(prefix='/menus', tags=['menu'])
 async def get_all_menu(menu: MenuService = Depends(MenuService)):
     rows = await menu.list()
     return rows
+
+
+@router.get('/everything',
+            response_model=list[Everything],
+            summary='Get all from DB',
+            description='Gets all data from database')
+async def get_all(menu: MenuService = Depends(MenuService)):
+    data = await menu.get_all_data()
+    return data
 
 
 @router.get('/{menu_id}',
