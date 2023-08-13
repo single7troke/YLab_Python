@@ -13,6 +13,7 @@ class Config(BaseSettings):
     rabbitmq_default_pass: str
     rabbit_host: str = 'rabbitmq'
     rabbit_port: int = 5672
+    path_to_menu_file: str = '/admin/Menu.xlsx'
 
     @property
     def rabbit_url(self):

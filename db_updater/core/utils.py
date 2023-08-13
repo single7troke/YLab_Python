@@ -1,3 +1,4 @@
+import hashlib
 import json
 
 import requests
@@ -5,6 +6,14 @@ from core.config import Config
 from core.models import Response
 
 config = Config()
+
+
+def get_hash(path: str) -> str:
+    hash_md5 = hashlib.md5()
+    with open(path, 'rb') as f:
+        for chunk in iter(lambda: f.read(4096), b''):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
 
 
 def construct_url(url_type: str, menu_id='', submenu_id='', dish_id=''):

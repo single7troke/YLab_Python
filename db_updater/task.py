@@ -1,10 +1,11 @@
 import logging
+from typing import Any
 
 from celery import Celery
 from core import parser, reader
 from core.config import Config
 from core.models import Types
-from core.utils import post_request, update_request
+from core.utils import delete_request, get_hash, post_request, update_request
 
 config = Config()
 logger = logging.getLogger(__name__)
@@ -12,17 +13,26 @@ logger.setLevel(logging.INFO)
 
 app = Celery('task', broker=config.rabbit_url, backend='rpc://')
 
-CURRENT_DB: dict[dict, str | dict] = dict()
+HASH_SUM = None
+CURRENT_DB: dict[str, Any] = dict()
 
 
 @app.task(bind=True)
 def test(self):
     global CURRENT_DB
-    # to_delete = {k: v for k, v in CURRENT_DB.items()}
+    global HASH_SUM
+    file_hash = get_hash(config.path_to_menu_file)
+    if file_hash == HASH_SUM:
+        logger.info('Nothing happened')
+        return
+
+    to_delete = {k: v for k, v in CURRENT_DB.items()}
     menu_id, submenu_id, dish_id = 0, 0, 0
     menu_uuid, submenu_uuid, dish_uuid = '', '', ''
     for row in reader():
         data = parser(row)
+        if data is None:
+            continue
         if data.type == Types().MENU:
             menu_id = data.id
             submenu_id = 0
@@ -46,6 +56,10 @@ def test(self):
                 CURRENT_DB[_id]['data']['description'] = response['description']
                 if 'price' in response:
                     CURRENT_DB[_id]['data']['price'] = response['price']
+                logger.info(f'Updated {current_data["type"]}, _id: {_id}')
+            menu_uuid = current_data['ids']['menu_id']
+            submenu_uuid = current_data['ids']['submenu_id']
+            to_delete.pop(_id)
             continue
 
         # записи нет
@@ -61,6 +75,7 @@ def test(self):
                                     submenu_id=submenu_uuid,
                                     dish_id=dish_uuid)
             menu_uuid = response['id']
+            logger.info(f'Created menu, _id: {_id}')
         elif data.type == Types().SUBMENU:
             submenu_uuid = ''
             dish_uuid = ''
@@ -70,6 +85,7 @@ def test(self):
                                     submenu_id=submenu_uuid,
                                     dish_id=dish_uuid)
             submenu_uuid = response['id']
+            logger.info(f'Created submenu, _id: {_id}')
         else:
             dish_uuid = ''
             response = post_request(url_type=data.type,
@@ -78,6 +94,7 @@ def test(self):
                                     submenu_id=submenu_uuid,
                                     dish_id=dish_uuid)
             dish_uuid = response['id']
+            logger.info(f'Created dish, _id: {_id}')
 
         new_data = {
             'ids': {
@@ -85,11 +102,20 @@ def test(self):
                 'submenu_id': submenu_uuid,
                 'dish_id': dish_uuid
             },
-            'data': data.data
+            'data': data.data,
+            'type': data.type,
+            '_id': _id
         }
 
         CURRENT_DB[_id] = new_data
-        logger.info(str(CURRENT_DB))
+
+    for _id, data in to_delete.items():
+        delete_request(url_type=data['type'], **data['ids'])
+        CURRENT_DB.pop(_id)
+        logger.info(f'Deleted {data["type"]}, _id: {_id}')
+
+    HASH_SUM = file_hash
+    logger.info(str(CURRENT_DB))
 
 
 app.conf.beat_schedule = {

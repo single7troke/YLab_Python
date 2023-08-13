@@ -3,7 +3,7 @@ from typing import Any
 from core.models import DataFromFile, Types
 
 
-def parser(row: list) -> DataFromFile:
+def parser(row: list) -> DataFromFile | None:
     data: dict[str, Any] = {
         'id': int,
         'type': '',
@@ -27,5 +27,7 @@ def parser(row: list) -> DataFromFile:
         data['data']['description'] = row[4]
         data['data']['price'] = str(row[5])
         data['type'] = Types().DISH
+    else:
+        return None
 
     return DataFromFile(**data)
