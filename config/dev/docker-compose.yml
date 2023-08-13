@@ -48,9 +48,9 @@ services:
     healthcheck:
       test: [ "CMD", "redis-cli","ping" ]
       interval: 10s
-      timeout: 15s
+      timeout: 20s
       retries: 5
-      start_period: 30s
+      start_period: 40s
 
   celery:
     build:
@@ -58,11 +58,11 @@ services:
     volumes:
       - ../../db_updater:/db_updater
       - ../../admin:/admin
-#    ports:
-#      - "8000:8000"
     depends_on:
       rabbitmq:
         condition: service_healthy
+      web-app:
+        condition: service_started
     networks:
       - ylab_web
     env_file:
@@ -81,7 +81,7 @@ services:
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 10s
-      timeout: 10s
+      timeout: 20s
       retries: 3
 
 volumes:
