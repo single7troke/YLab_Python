@@ -47,3 +47,18 @@ test_run:
 	docker-compose -f config/test/docker-compose.yml up -d web-app db redis
 	docker-compose -f config/test/docker-compose.yml up tests
 	docker-compose -f config/test/docker-compose.yml down -v --remove-orphans
+
+celery_run:
+	docker-compose -f config/dev/docker-compose.yml up -d celery rabbitmq
+
+celery_stop:
+	docker-compose -f config/dev/docker-compose.yml down -v --remove-orphans celery rabbitmq
+
+logs_celery:
+	docker logs dev-celery-1
+
+celery_image_rm:
+	docker image rm dev-celery
+
+celery_cont_rm:
+	docker rm -f dev-celery-1
