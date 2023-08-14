@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends
 from schemas import CreateSubmenu, SubMenu
 from services.submenu_service import SubmenuService
 
@@ -37,8 +37,9 @@ async def get_single_submenu(menu_id: UUID,
              description='Creates new submenu and returns it')
 async def create_submenu(body: CreateSubmenu,
                          menu_id: UUID,
+                         task: BackgroundTasks,
                          submenu: SubmenuService = Depends(SubmenuService)):
-    new_submenu = await submenu.create(menu_id=menu_id, data=body)
+    new_submenu = await submenu.create(menu_id=menu_id, data=body, task=task)
     return new_submenu
 
 
@@ -50,8 +51,9 @@ async def create_submenu(body: CreateSubmenu,
 async def update_submenu(menu_id: UUID,
                          submenu_id: UUID,
                          body: CreateSubmenu,
+                         task: BackgroundTasks,
                          submenu: SubmenuService = Depends(SubmenuService)):
-    updated_menu = await submenu.update(menu_id=menu_id, submenu_id=submenu_id, data=body)
+    updated_menu = await submenu.update(menu_id=menu_id, submenu_id=submenu_id, data=body, task=task)
     return updated_menu
 
 
@@ -60,6 +62,7 @@ async def update_submenu(menu_id: UUID,
                description='Deletes submenu and returns message that submenu have been deleted')
 async def delete_submenu(menu_id: UUID,
                          submenu_id: UUID,
+                         task: BackgroundTasks,
                          submenu: SubmenuService = Depends(SubmenuService)):
-    data = await submenu.delete(menu_id=menu_id, submenu_id=submenu_id)
+    data = await submenu.delete(menu_id=menu_id, submenu_id=submenu_id, task=task)
     return data

@@ -48,9 +48,41 @@ services:
     healthcheck:
       test: [ "CMD", "redis-cli","ping" ]
       interval: 10s
-      timeout: 15s
+      timeout: 20s
       retries: 5
-      start_period: 30s
+      start_period: 40s
+
+  celery:
+    build:
+      context: ../../db_updater/
+    volumes:
+      - ../../db_updater:/db_updater
+      - ../../admin:/admin
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      web-app:
+        condition: service_started
+    networks:
+      - ylab_web
+    env_file:
+      - .env
+    entrypoint: sh -c "celery -A task worker -B --loglevel=INFO"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    env_file:
+      - .env
+    networks:
+      - ylab_web
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 20s
+      retries: 3
 
 volumes:
   menu-db:

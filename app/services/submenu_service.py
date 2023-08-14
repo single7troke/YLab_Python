@@ -3,7 +3,7 @@ from uuid import UUID
 
 from db.filters import GetAllSubmenusFilter, GetSingleSubmenuFilter
 from db.repositories import SubmenuRepository
-from fastapi import Depends, HTTPException
+from fastapi import BackgroundTasks, Depends, HTTPException
 from schemas import CreateSubmenu, SubMenu
 from services import CacheService
 
@@ -38,27 +38,41 @@ class SubmenuService:
             value=pickle.dumps([dict(submenu) for submenu in submenus]))
         return submenus
 
-    async def create(self, menu_id: UUID, data: CreateSubmenu) -> SubMenu | None:
+    async def create(self,
+                     menu_id: UUID,
+                     task: BackgroundTasks,
+                     data: CreateSubmenu) -> SubMenu | None:
         row = await self.repository.create(menu_id=menu_id, data=data)
         if row:
-            await self.cache.submenu_cache_invalidation(menu_id=str(menu_id))
+            task.add_task(self.cache.submenu_cache_invalidation, menu_id=str(menu_id))
             return SubMenu(id=str(row.id),
                            title=row.title,
                            description=row.description,
                            dishes_count=0)
         return None
 
-    async def update(self, menu_id: UUID, submenu_id: UUID, data: CreateSubmenu) -> SubMenu:
+    async def update(self,
+                     menu_id: UUID,
+                     submenu_id: UUID,
+                     task: BackgroundTasks,
+                     data: CreateSubmenu) -> SubMenu:
         rows = await self.repository.update(submenu_id=submenu_id, data=data)
         if rows:
-            await self.cache.submenu_cache_invalidation(menu_id=str(menu_id), submenu_id=str(submenu_id))
+            task.add_task(self.cache.submenu_cache_invalidation,
+                          menu_id=str(menu_id),
+                          submenu_id=str(submenu_id))
             return SubMenu.fill(rows[0])
         raise HTTPException(status_code=404, detail='submenu not found')
 
-    async def delete(self, menu_id: UUID, submenu_id: UUID) -> dict | None:
+    async def delete(self,
+                     menu_id: UUID,
+                     task: BackgroundTasks,
+                     submenu_id: UUID) -> dict | None:
         data = await self.repository.delete(submenu_id=submenu_id)
         if data:
-            await self.cache.submenu_cache_invalidation(menu_id=str(menu_id), submenu_id=str(submenu_id))
+            task.add_task(self.cache.submenu_cache_invalidation,
+                          menu_id=str(menu_id),
+                          submenu_id=str(submenu_id))
             return {'status': True,
                     'message': 'The submenu has been deleted'}
         return None

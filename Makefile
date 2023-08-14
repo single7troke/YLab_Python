@@ -4,6 +4,9 @@ help:
 	@awk 'BEGIN {FS = ":.*##"; printf "Usage: make \033[36m<target>\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 run:
+	docker-compose -f config/dev/docker-compose.yml up -d
+
+postman:
 	docker-compose -f config/dev/docker-compose.yml up -d web-app db redis
 
 stop:
@@ -47,3 +50,18 @@ test_run:
 	docker-compose -f config/test/docker-compose.yml up -d web-app db redis
 	docker-compose -f config/test/docker-compose.yml up tests
 	docker-compose -f config/test/docker-compose.yml down -v --remove-orphans
+
+celery_run:
+	docker-compose -f config/dev/docker-compose.yml up -d celery rabbitmq
+
+celery_stop:
+	docker-compose -f config/dev/docker-compose.yml down -v --remove-orphans celery rabbitmq
+
+logs_celery:
+	docker logs dev-celery-1
+
+celery_image_rm:
+	docker image rm dev-celery
+
+celery_cont_rm:
+	docker rm -f dev-celery-1

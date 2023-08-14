@@ -7,14 +7,18 @@ class CacheService:
         self.cache = cache
 
     async def load_to_cache(self, key: str, value) -> bool:
+        print(f'to cache {key}-----------------------------------')
         res = await self.cache.set(key=key, value=value)
         return res
 
     async def get_from_cache(self, key: str) -> bytes:
+        print(f'from cache {key}---------------------------------')
         data = await self.cache.get(key=key)
         return data
 
     async def menu_cache_invalidation(self, menu_id: str | None = None) -> None:
+        print('menu_invalidation ---------------------------------')
+        await self.cache.delete(key='all-data')
         await self.cache.delete(key='menu-list')
         if menu_id:
             await self.cache.delete(key=str(menu_id))

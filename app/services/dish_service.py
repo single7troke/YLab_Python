@@ -3,7 +3,7 @@ from uuid import UUID
 
 from db.filters import GetAllDishesFilter, GetSingleDishFilter
 from db.repositories import DishRepository
-from fastapi import Depends, HTTPException
+from fastapi import BackgroundTasks, Depends, HTTPException
 from schemas import CreateDish, Dish
 from services import CacheService
 
@@ -39,33 +39,48 @@ class DishService:
             value=pickle.dumps([dict(submenu) for submenu in dishes]))
         return dishes
 
-    async def create(self, menu_id: UUID, submenu_id: UUID, data: CreateDish) -> Dish | None:
+    async def create(self,
+                     menu_id: UUID,
+                     submenu_id: UUID,
+                     data: CreateDish,
+                     task: BackgroundTasks) -> Dish | None:
         row = await self.repository.create(submenu_id=submenu_id, data=data)
         if row:
-            await self.cache.dish_cache_invalidation(menu_id=str(menu_id), submenu_id=str(submenu_id))
+            task.add_task(self.cache.dish_cache_invalidation,
+                          menu_id=str(menu_id),
+                          submenu_id=str(submenu_id))
             return Dish.fill(data=row)
         return None
 
-    async def update(self, menu_id: UUID, submenu_id: UUID, dish_id: UUID, data: CreateDish) -> Dish:
+    async def update(self,
+                     menu_id: UUID,
+                     submenu_id: UUID,
+                     dish_id: UUID,
+                     data: CreateDish,
+                     task: BackgroundTasks) -> Dish:
         rows = await self.repository.update(dish_id=dish_id, data=data)
         if rows:
-            await self.cache.dish_cache_invalidation(
-                menu_id=str(menu_id),
-                submenu_id=str(submenu_id),
-                dish_id=str(dish_id)
-            )
+            task.add_task(self.cache.dish_cache_invalidation,
+                          menu_id=str(menu_id),
+                          submenu_id=str(submenu_id),
+                          dish_id=str(dish_id))
+
             return Dish.fill(rows[0])
         else:
             raise HTTPException(status_code=404, detail='submenu not found')
 
-    async def delete(self, menu_id: UUID, submenu_id: UUID, dish_id: UUID) -> dict | None:
+    async def delete(self,
+                     menu_id: UUID,
+                     submenu_id: UUID,
+                     dish_id: UUID,
+                     task: BackgroundTasks) -> dict | None:
         data = await self.repository.delete(dish_id=dish_id)
         if data:
-            await self.cache.dish_cache_invalidation(
-                menu_id=str(menu_id),
-                submenu_id=str(submenu_id),
-                dish_id=str(dish_id)
-            )
+            task.add_task(self.cache.dish_cache_invalidation,
+                          menu_id=str(menu_id),
+                          submenu_id=str(submenu_id),
+                          dish_id=str(dish_id))
+
             return {'status': True,
                     'message': 'The dish has been deleted'}
         return None

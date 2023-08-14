@@ -9,6 +9,7 @@ from schemas import CreateMenu
 from sqlalchemy import Row, delete, distinct, func, insert, select, update
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 
 class MenuRepository:
@@ -64,3 +65,12 @@ class MenuRepository:
             return 1
         except Exception as e:
             raise e
+
+    async def get_everything(self) -> Sequence[Row]:
+        data = await self.db.execute(
+            select(Menu).options(
+                selectinload(Menu.submenus).
+                selectinload(SubMenu.dishes)
+            )
+        )
+        return data.scalars().all()
