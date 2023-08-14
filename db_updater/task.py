@@ -115,7 +115,7 @@ def test(self):
         logger.info(f'Deleted {data["type"]}, _id: {_id}')
 
     HASH_SUM = file_hash
-    logger.info(str(CURRENT_DB))
+    logger.info('Updated')
 
 
 app.conf.beat_schedule = {
