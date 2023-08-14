@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends
 from schemas import CreateMenu, Everything, Menu
 from services import MenuService
 
@@ -41,8 +41,9 @@ async def get_single_menu(menu_id: UUID,
              summary='New menu',
              description='Creates new menu and returns it')
 async def create_menu(body: CreateMenu,
+                      task: BackgroundTasks,
                       menu: MenuService = Depends(MenuService)):
-    new_menu = await menu.create(data=body)
+    new_menu = await menu.create(data=body, task=task)
     return new_menu
 
 
@@ -53,8 +54,9 @@ async def create_menu(body: CreateMenu,
               description='Updates menu and returns updated menu')
 async def update_menu(menu_id: UUID,
                       data: CreateMenu,
+                      task: BackgroundTasks,
                       menu: MenuService = Depends(MenuService)):
-    updated_menu = await menu.update(menu_id=menu_id, data=data)
+    updated_menu = await menu.update(menu_id=menu_id, data=data, task=task)
     return updated_menu
 
 
@@ -62,6 +64,7 @@ async def update_menu(menu_id: UUID,
                summary='Delete menu',
                description='Deletes menu and returns message that menu have been deleted')
 async def delete_menu(menu_id: UUID,
+                      task: BackgroundTasks,
                       menu: MenuService = Depends(MenuService)):
-    data = await menu.delete(menu_id=menu_id)
+    data = await menu.delete(menu_id=menu_id, task=task)
     return data

@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends
 from schemas import CreateDish, Dish
 from services import DishService
 
@@ -40,8 +40,12 @@ async def get_single_dish(menu_id: UUID,
 async def create_dish(menu_id: UUID,
                       submenu_id: UUID,
                       body: CreateDish,
+                      task: BackgroundTasks,
                       dish: DishService = Depends(DishService)):
-    new_dish = await dish.create(menu_id=menu_id, submenu_id=submenu_id, data=body)
+    new_dish = await dish.create(menu_id=menu_id,
+                                 submenu_id=submenu_id,
+                                 data=body,
+                                 task=task)
     return new_dish
 
 
@@ -54,8 +58,13 @@ async def update_dish(menu_id: UUID,
                       submenu_id: UUID,
                       dish_id: UUID,
                       body: CreateDish,
+                      task: BackgroundTasks,
                       dish: DishService = Depends(DishService)):
-    updated_menu = await dish.update(menu_id=menu_id, submenu_id=submenu_id, dish_id=dish_id, data=body)
+    updated_menu = await dish.update(menu_id=menu_id,
+                                     submenu_id=submenu_id,
+                                     dish_id=dish_id,
+                                     data=body,
+                                     task=task)
     return updated_menu
 
 
@@ -65,6 +74,10 @@ async def update_dish(menu_id: UUID,
 async def delete_dish(menu_id: UUID,
                       submenu_id: UUID,
                       dish_id: UUID,
+                      task: BackgroundTasks,
                       dish: DishService = Depends(DishService)):
-    data = await dish.delete(menu_id=menu_id, submenu_id=submenu_id, dish_id=dish_id)
+    data = await dish.delete(menu_id=menu_id,
+                             submenu_id=submenu_id,
+                             dish_id=dish_id,
+                             task=task)
     return data
