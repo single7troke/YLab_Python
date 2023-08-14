@@ -45,7 +45,6 @@ class SubmenuService:
         row = await self.repository.create(menu_id=menu_id, data=data)
         if row:
             task.add_task(self.cache.submenu_cache_invalidation, menu_id=str(menu_id))
-            # await self.cache.submenu_cache_invalidation(menu_id=str(menu_id))
             return SubMenu(id=str(row.id),
                            title=row.title,
                            description=row.description,
@@ -62,7 +61,6 @@ class SubmenuService:
             task.add_task(self.cache.submenu_cache_invalidation,
                           menu_id=str(menu_id),
                           submenu_id=str(submenu_id))
-            # await self.cache.submenu_cache_invalidation(menu_id=str(menu_id), submenu_id=str(submenu_id))
             return SubMenu.fill(rows[0])
         raise HTTPException(status_code=404, detail='submenu not found')
 
@@ -75,7 +73,6 @@ class SubmenuService:
             task.add_task(self.cache.submenu_cache_invalidation,
                           menu_id=str(menu_id),
                           submenu_id=str(submenu_id))
-            # await self.cache.submenu_cache_invalidation(menu_id=str(menu_id), submenu_id=str(submenu_id))
             return {'status': True,
                     'message': 'The submenu has been deleted'}
         return None

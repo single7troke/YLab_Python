@@ -49,7 +49,6 @@ class DishService:
             task.add_task(self.cache.dish_cache_invalidation,
                           menu_id=str(menu_id),
                           submenu_id=str(submenu_id))
-            # await self.cache.dish_cache_invalidation(menu_id=str(menu_id), submenu_id=str(submenu_id))
             return Dish.fill(data=row)
         return None
 
@@ -65,11 +64,7 @@ class DishService:
                           menu_id=str(menu_id),
                           submenu_id=str(submenu_id),
                           dish_id=str(dish_id))
-            # await self.cache.dish_cache_invalidation(
-            #     menu_id=str(menu_id),
-            #     submenu_id=str(submenu_id),
-            #     dish_id=str(dish_id)
-            # )
+
             return Dish.fill(rows[0])
         else:
             raise HTTPException(status_code=404, detail='submenu not found')
@@ -85,11 +80,7 @@ class DishService:
                           menu_id=str(menu_id),
                           submenu_id=str(submenu_id),
                           dish_id=str(dish_id))
-            # await self.cache.dish_cache_invalidation(
-            #     menu_id=str(menu_id),
-            #     submenu_id=str(submenu_id),
-            #     dish_id=str(dish_id)
-            # )
+
             return {'status': True,
                     'message': 'The dish has been deleted'}
         return None

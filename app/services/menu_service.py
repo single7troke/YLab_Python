@@ -50,7 +50,6 @@ class MenuService:
         rows = await self.repository.update(menu_id=menu_id, data=data)
         if rows:
             task.add_task(self.cache.menu_cache_invalidation, menu_id=str(menu_id))
-            # await self.cache.menu_cache_invalidation(menu_id=str(menu_id))
             row = rows[0]
             return Menu.fill(data=row)
         raise HTTPException(status_code=404, detail='menu not found')
@@ -59,7 +58,6 @@ class MenuService:
         data = await self.repository.delete(menu_id=menu_id)
         if data:
             task.add_task(self.cache.menu_cache_invalidation, menu_id=str(menu_id))
-            # await self.cache.menu_cache_invalidation(menu_id=str(menu_id))
             return {'status': True,
                     'message': 'The menu has been deleted'}
         return None
