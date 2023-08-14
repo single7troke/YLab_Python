@@ -9,3 +9,4 @@ class Config(BaseSettings):
     menu_url: str = web_app_url + '/menus/{menu_id}'
     sub_menu_url: str = menu_url + '/submenus/{submenu_id}'
     dish_url: str = sub_menu_url + '/dishes/{dish_id}'
+    everything_url: str = web_app_url + '/menus/everything'
